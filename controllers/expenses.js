@@ -69,11 +69,67 @@ const deleteExpense = async (req, res) => {
         const {id} = req.params;
 
         const deletedExpense = await Expense.findByIdAndDelete(id);
-
+        
         res.status(200).json(deletedExpense);
     } catch {
         res.status(400).json({message: 'expense not found'});
     }
+
+}
+
+// this month
+
+const expensesCurrentMonth = async (req, res) => {
+    const firstDayOfCurrentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    const today = new Date();
+
+    try {
+        const currentMonthExpenses = await Expense.find({createdAt: { $gte: firstDayOfCurrentMonth, $lt: today }})
+
+        res.status(200).json(currentMonthExpenses);
+
+    } catch (e) {
+        res.status(400).json({message: 'expense not found'});
+    }
+}
+
+// weekly expense
+
+const expensesCurrentWeek = async (req, res) => {
+    try {
+        const today = new Date();
+
+        const lastWeekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+
+        const currentWeekExpenses = await Expense.find({createdAt: { $gte: lastWeekStart, $lt: today }})
+
+        res.status(200).json(currentWeekExpenses);
+
+    } catch (e) {
+        res.status(400).json({message: 'Weekly stats could not be found'});
+    }
+    
+}
+
+// monhtly expense
+
+const expensesLastMonth = async (req, res) => {
+    try {
+        const currentMonth = new Date().getMonth();
+
+        const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1; 
+
+        const firstDayOfLastMonth = new Date(new Date().getFullYear(), lastMonth, 1);
+        const lastDayOfLastMonth = new Date(new Date().getFullYear(), lastMonth + 1, 0);
+
+        const lastMonthExpenses = await Expense.find({createdAt: { $lt: lastDayOfLastMonth, $gte: firstDayOfLastMonth }})
+
+        res.status(200).json(lastMonthExpenses);
+    } catch (e) {
+        res.status(400).json({message: 'expense not found'});
+    }
+    
 
 }
 
@@ -82,5 +138,8 @@ module.exports = {
     getExpenses,
     updateExpense,
     deleteExpense,
-    createExpense
+    createExpense,
+    expensesCurrentMonth,
+    expensesCurrentWeek,
+    expensesLastMonth
 }
