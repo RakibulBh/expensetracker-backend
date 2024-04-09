@@ -6,7 +6,6 @@ require('dotenv').config();
 const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
-const { fileURLToPath} = require('url');
 
 const expenseRoutes = require('./routes/expenseRoutes.js');
 const authRoutes = require('./routes/authRoutes.js');
