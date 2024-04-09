@@ -32,7 +32,6 @@ app.use('/auth', authRoutes)
 app.use('/expenses', expenseRoutes)
 
 
-
 mongoose.connect(process.env.MONGO_URL)
 .then(() => console.log("Database connected"));
 

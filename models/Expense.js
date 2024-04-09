@@ -16,8 +16,14 @@ const expenseSchema = new mongoose.Schema({
     userId: {
         type: String,
         required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now 
     }
-}, {timestamps: true})
+}, {
+  timestamps: false
+})
 
 const Expense = new mongoose.model("Expense", expenseSchema);
 

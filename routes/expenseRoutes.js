@@ -9,6 +9,13 @@ const router = express.Router()
 
 router.use(requireAuth);
 
+// stats
+
+router.get('/lastmonth', expensesLastMonth);
+router.get('/thismonth', expensesCurrentMonth);
+router.get('/thisweek', expensesCurrentWeek);
+
+
 /* Create */
 
 router.post('/', createExpense);
@@ -26,10 +33,5 @@ router.patch('/:id', updateExpense);
 
 router.delete('/:id', deleteExpense);
 
-// stats
-
-router.get('/lastmonth', expensesLastMonth);
-router.get('thisweek', expensesCurrentWeek);
-router.get('thismonth', expensesCurrentMonth);
 
 module.exports = router;

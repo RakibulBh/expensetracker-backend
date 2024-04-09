@@ -1,4 +1,5 @@
 const Expense = require('../models/Expense.js');
+const { formatDate, getWeekStartAndEnd } = require('../helpers/formatDate.js');
 
 /* Create */
 
@@ -41,10 +42,19 @@ const getExpenses = async (req, res) => {
 const updateExpense = async (req, res) => {
     const { id } = req.params;
 
-    const newData = req.body; 
+    let newData = req.body; 
+
+    if (newData.createdAt) {
+        newData = {
+            ...newData,
+            createdAt: new Date(newData.createdAt)
+        };
+    }
 
     try {
+
         const updatedExpense = await Expense.findByIdAndUpdate(id, newData, { new: true });
+        
         if (!updatedExpense) {
             return res.status(404).json({ message: 'Expense not found' });
         }
@@ -80,17 +90,23 @@ const deleteExpense = async (req, res) => {
 // this month
 
 const expensesCurrentMonth = async (req, res) => {
-    const firstDayOfCurrentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-
     const today = new Date();
+    const firstDayOfCurrentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const dateRange = `${formatDate(firstDayOfCurrentMonth)} - ${formatDate(today)}`;
+
 
     try {
-        const currentMonthExpenses = await Expense.find({createdAt: { $gte: firstDayOfCurrentMonth, $lt: today }})
+        const userId = req.user._id.toString();
 
-        res.status(200).json(currentMonthExpenses);
+        const currentMonthExpenses = await Expense.find({
+            userId,
+            createdAt: { $gte: firstDayOfCurrentMonth, $lt: today }
+        });
+
+        res.status(200).json({ expenses: currentMonthExpenses, dateRange });
 
     } catch (e) {
-        res.status(400).json({message: 'expense not found'});
+        res.status(400).json({message: 'Error fetching current month expenses'});
     }
 }
 
@@ -98,13 +114,18 @@ const expensesCurrentMonth = async (req, res) => {
 
 const expensesCurrentWeek = async (req, res) => {
     try {
-        const today = new Date();
+        const { startOfWeek, endOfWeek } = getWeekStartAndEnd();
+        const dateRange = `${formatDate(startOfWeek)} - ${formatDate(endOfWeek)}`;
 
-        const lastWeekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+        const userId = req.user._id.toString();
 
-        const currentWeekExpenses = await Expense.find({createdAt: { $gte: lastWeekStart, $lt: today }})
+        const currentWeekExpenses = await Expense.find({
+            userId,
+            createdAt: { $gte: startOfWeek, $lt: endOfWeek }
+        }).select('amount');
 
-        res.status(200).json(currentWeekExpenses);
+        res.status(200).json({ expenses: currentWeekExpenses, dateRange });
+
 
     } catch (e) {
         res.status(400).json({message: 'Weekly stats could not be found'});
@@ -116,22 +137,24 @@ const expensesCurrentWeek = async (req, res) => {
 
 const expensesLastMonth = async (req, res) => {
     try {
-        const currentMonth = new Date().getMonth();
+        const today = new Date();
+        const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1); // First day of last month
+        const startOfLastMonth = new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1);
+        const endOfLastMonth = new Date(lastMonth.getFullYear(), lastMonth.getMonth() + 1, 0); // Last day of last month
+        
+        const dateRange = `${formatDate(startOfLastMonth)} - ${formatDate(endOfLastMonth)}`;
+        const userId = req.user._id.toString();
 
-        const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1; 
+        const lastMonthExpenses = await Expense.find({
+            userId,
+            createdAt: { $gte: startOfLastMonth, $lt: endOfLastMonth }
+        });
 
-        const firstDayOfLastMonth = new Date(new Date().getFullYear(), lastMonth, 1);
-        const lastDayOfLastMonth = new Date(new Date().getFullYear(), lastMonth + 1, 0);
-
-        const lastMonthExpenses = await Expense.find({createdAt: { $lt: lastDayOfLastMonth, $gte: firstDayOfLastMonth }})
-
-        res.status(200).json(lastMonthExpenses);
+        res.status(200).json({ expenses: lastMonthExpenses, dateRange });
     } catch (e) {
-        res.status(400).json({message: 'expense not found'});
+        res.status(400).json({ message: 'expenses not found' });
     }
-    
-
-}
+};
 
 module.exports = {
     getExpense,
