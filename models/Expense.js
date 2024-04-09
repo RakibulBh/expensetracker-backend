@@ -12,6 +12,7 @@ const expenseSchema = new mongoose.Schema({
     amount: {
         type: Number,
         min: 0,
+        max: 1000000,
         required: true
     },
     userId: {
