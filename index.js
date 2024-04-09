@@ -15,15 +15,15 @@ const userRoutes = require('./routes/userRoutes.js');
 /* CONFIGURATIONS */
 const app = express();
 app.use(express.json());
-app.use(helmet());
+// app.use(helmet());
 // app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin"}));
-app.use(morgan("common"));
+// app.use(morgan("common"));
 app.use(cors());
-app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
-app.use((req, res, next) => {
-    res.setHeader('Content-Security-Policy', "default-src 'self'; font-src 'self' https://www.slant.co fonts.googleapis.com data:; style-src 'self' 'unsafe-inline' fonts.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval';");
-    next();
-});
+// app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
+// app.use((req, res, next) => {
+//     res.setHeader('Content-Security-Policy', "default-src 'self'; font-src 'self' https://www.slant.co fonts.googleapis.com data:; style-src 'self' 'unsafe-inline' fonts.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval';");
+//     next();
+// });
 
 /* Routes */
 
