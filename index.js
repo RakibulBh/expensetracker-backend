@@ -21,6 +21,11 @@ app.use(helmet());
 app.use(morgan("common"));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
+app.use((req, res, next) => {
+    res.setHeader('Content-Security-Policy', 'font-src https://www.slant.co;');
+    next();
+});
+
 
 
 /* Routes */
