@@ -92,21 +92,23 @@ const deleteExpense = async (req, res) => {
 const expensesCurrentMonth = async (req, res) => {
     const today = new Date();
     const firstDayOfCurrentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const dateRange = `${formatDate(firstDayOfCurrentMonth)} - ${formatDate(today)}`;
+    const firstDayOfNextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+    const lastDayOfCurrentMonth = new Date(firstDayOfNextMonth - 1);
 
+    const dateRange = `${formatDate(firstDayOfCurrentMonth)} - ${formatDate(lastDayOfCurrentMonth)}`;
 
     try {
         const userId = req.user._id.toString();
 
         const currentMonthExpenses = await Expense.find({
             userId,
-            createdAt: { $gte: firstDayOfCurrentMonth, $lt: today }
+            createdAt: { $gte: firstDayOfCurrentMonth, $lte: lastDayOfCurrentMonth }
         });
 
-        res.status(200).json({ error: currentMonthExpenses, dateRange });
+        res.status(200).json({ expenses: currentMonthExpenses, dateRange }); // Changed key from 'error' to 'expenses'
 
     } catch (e) {
-        res.status(400).json({error: 'Error fetching current month expenses'});
+        res.status(400).json({ error: 'Error fetching current month expenses' });
     }
 }
 
