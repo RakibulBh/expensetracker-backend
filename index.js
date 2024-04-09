@@ -21,7 +21,7 @@ app.use(morgan("common"));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
 app.use((req, res, next) => {
-    res.setHeader('Content-Security-Policy', 'font-src https://www.slant.co;');
+    res.setHeader('Content-Security-Policy', "default-src 'self'; font-src 'self' https://www.slant.co fonts.googleapis.com data:; style-src 'self' 'unsafe-inline' fonts.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval';");
     next();
 });
 
