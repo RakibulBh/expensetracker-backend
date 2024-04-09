@@ -11,7 +11,7 @@ const createExpense = async (req, res) => {
         const newExpense = await Expense.create({title, category, amount, userId: req.user._id});
         res.status(200).json(newExpense)
     } catch(error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ error: error.message });
     }
 
 }
@@ -24,7 +24,7 @@ const getExpense = async (req, res) => {
 
     const expense = await Expense.findOne({id});
 
-    if (!expense) return res.status(400).json({message: 'expense not found'});
+    if (!expense) return res.status(400).json({error: 'expense not found'});
 
     return res.status(200).json(expense);
 
@@ -56,7 +56,7 @@ const updateExpense = async (req, res) => {
         const updatedExpense = await Expense.findByIdAndUpdate(id, newData, { new: true });
         
         if (!updatedExpense) {
-            return res.status(404).json({ message: 'Expense not found' });
+            return res.status(404).json({ error: 'Expense not found' });
         }
         
         const user = req.user._id
@@ -65,7 +65,7 @@ const updateExpense = async (req, res) => {
 
         res.status(200).json(expenses);
     } catch (error) {
-        return res.status(500).json({ message: 'Error updating expense' });
+        return res.status(500).json({ error: 'Error updating expense' });
     }
 }
 
@@ -82,7 +82,7 @@ const deleteExpense = async (req, res) => {
         
         res.status(200).json(deletedExpense);
     } catch {
-        res.status(400).json({message: 'expense not found'});
+        res.status(400).json({error: 'expense not found'});
     }
 
 }
@@ -103,10 +103,10 @@ const expensesCurrentMonth = async (req, res) => {
             createdAt: { $gte: firstDayOfCurrentMonth, $lt: today }
         });
 
-        res.status(200).json({ expenses: currentMonthExpenses, dateRange });
+        res.status(200).json({ error: currentMonthExpenses, dateRange });
 
     } catch (e) {
-        res.status(400).json({message: 'Error fetching current month expenses'});
+        res.status(400).json({error: 'Error fetching current month expenses'});
     }
 }
 
@@ -128,7 +128,7 @@ const expensesCurrentWeek = async (req, res) => {
 
 
     } catch (e) {
-        res.status(400).json({message: 'Weekly stats could not be found'});
+        res.status(400).json({error: 'Weekly stats could not be found'});
     }
     
 }
@@ -152,7 +152,7 @@ const expensesLastMonth = async (req, res) => {
 
         res.status(200).json({ expenses: lastMonthExpenses, dateRange });
     } catch (e) {
-        res.status(400).json({ message: 'expenses not found' });
+        res.status(400).json({ error: 'expenses not found' });
     }
 };
 

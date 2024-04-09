@@ -15,12 +15,12 @@ const registerUser = async (req, res) => {
 
     // Validate email
     if (!validator.isEmail(email)) {
-        return res.status(400).json({ message: 'Invalid email format' });
+        return res.status(400).json({ error: 'Invalid email' });
     }
 
     // Validate password
     if (!validator.isStrongPassword(password)) {
-        return res.status(400).json({ message: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one symbol' });
+        return res.status(400).json({ error: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one symbol' });
     }
 
     try {
@@ -31,7 +31,7 @@ const registerUser = async (req, res) => {
         res.status(201).json({user, token}); 
 
     } catch (error) { 
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ error: error.message });
     }
 };
 
@@ -43,7 +43,7 @@ const logUser = async (req, res) => {
 
     // Validate email
     if (!validator.isEmail(email)) {
-        return res.status(400).json({ message: 'Invalid email format' });
+        return res.status(400).json({ error: 'Invalid email format' });
     }
 
     try {
@@ -52,7 +52,7 @@ const logUser = async (req, res) => {
 
         res.status(200).json({ email, token });
     }  catch (error) { 
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ error: error.message });
     }
 };
 
