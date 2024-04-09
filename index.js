@@ -17,7 +17,7 @@ const userRoutes = require('./routes/userRoutes.js');
 const app = express();
 app.use(express.json());
 app.use(helmet());
-app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin"}));
+// app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin"}));
 app.use(morgan("common"));
 app.use(bodyParser.json({limit: "30mb", extended: true}));
 app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
@@ -38,6 +38,6 @@ app.use('/expenses', expenseRoutes)
 mongoose.connect(process.env.MONGO_URL)
 .then(() => console.log("Database connected"));
 
-app.listen(3001, () => {
+app.listen(process.env.PORT, () => {
     console.log("Listening on port 3001!")
 })
