@@ -13,14 +13,12 @@ const createToken = (_id) => {
 const registerUser = async (req, res) => {
     const { firstName, lastName, email, password } = req.body;
 
-    // Validate email
     if (!validator.isEmail(email)) {
-        return res.status(400).json({ error: 'Invalid email' });
+        return res.status(400).json({ email: 'Invalid email' });
     }
 
-    // Validate password
     if (!validator.isStrongPassword(password)) {
-        return res.status(400).json({ error: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one symbol' });
+        return res.status(400).json({ password: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one symbol' });
     }
 
     try {
@@ -41,9 +39,8 @@ const registerUser = async (req, res) => {
 const logUser = async (req, res) => {
     const { email, password } = req.body;
 
-    // Validate email
     if (!validator.isEmail(email)) {
-        return res.status(400).json({ error: 'Invalid email format' });
+        return res.status(400).json({ email: 'Invalid email format' });
     }
 
     try {
@@ -51,7 +48,8 @@ const logUser = async (req, res) => {
         const token = createToken(user._id);
 
         res.status(200).json({ email, token });
-    }  catch (error) { 
+    } catch (error) {
+        console.log(error);
         res.status(400).json({ error: error.message });
     }
 };
